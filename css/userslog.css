@@ -1,0 +1,261 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+/* ===========================
+   USERS LOG PAGE
+   =========================== */
+
+section {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 48px 28px 60px;
+  overflow-x: hidden;
+}
+
+h1 {
+  font-size: 28px !important;
+  color: #f0f4ff;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif !important;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px !important;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #4a5568;
+  margin-bottom: 32px;
+}
+
+/* ===========================
+   FILTER BUTTON
+   =========================== */
+.form-style-5 {
+  display: inline-block;
+  margin: 0 0 28px;
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.form-style-5 button {
+  font-family: 'Outfit', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  color: #00F0FF;
+  background: rgba(0, 240, 255, 0.06);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+  text-transform: none;
+}
+
+.form-style-5 button::before {
+  content: '⚙';
+  font-size: 14px;
+}
+
+.form-style-5 button:hover {
+  background: rgba(0, 240, 255, 0.12);
+  border-color: rgba(0, 240, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0, 240, 255, 0.15);
+}
+
+/* ===========================
+   MODAL EXPORT BUTTON
+   =========================== */
+.modal-content input[type="submit"] {
+  font-family: 'Outfit', sans-serif;
+  display: block;
+  padding: 12px 24px;
+  color: #080B12;
+  background: linear-gradient(135deg, #00F0FF, #BD00FF);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  width: 100%;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 8px;
+}
+
+.modal-content input[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(189, 0, 255, 0.3);
+}
+
+/* ===========================
+   FILTER PANEL CARDS
+   =========================== */
+.panel {
+  background: rgba(14, 19, 32, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.panel-heading {
+  background: rgba(0, 240, 255, 0.03) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #8892aa !important;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-body {
+  background-color: transparent !important;
+  padding: 16px;
+}
+
+/* ===========================
+   TIME FILTER RADIO
+   =========================== */
+.time {
+  display: flex;
+  gap: 0;
+}
+
+.time input {
+  position: absolute !important;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  width: 1px;
+  border: 0;
+  overflow: hidden;
+}
+
+.time label {
+  background: rgba(255, 255, 255, 0.03);
+  color: #4a5568;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.25s ease;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  margin: 0;
+}
+
+.time label:first-of-type { border-radius: 6px 0 0 6px; }
+.time label:last-of-type  { border-radius: 0 6px 6px 0; border-left: none; }
+
+.time label:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #a0aec0;
+}
+
+.time input:checked + label {
+  background: rgba(0, 240, 255, 0.1);
+  color: #00F0FF;
+  border-color: rgba(0, 240, 255, 0.3);
+}
+
+/* ===========================
+   LOG TABLE
+   =========================== */
+.table-card {
+  background: rgba(14, 19, 32, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  margin-top: 8px;
+}
+
+th {
+  padding: 14px 18px;
+  text-align: left !important;
+  font-weight: 600;
+  font-size: 11px;
+  color: #4a5568;
+  text-transform: uppercase;
+  border: none !important;
+  background: rgba(8, 11, 18, 0.9) !important;
+  letter-spacing: 1px;
+}
+
+td {
+  padding: 14px 18px;
+  text-align: left;
+  font-weight: 400;
+  font-size: 14px;
+  color: #d1d9e6;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+.error {
+  color: #ff6b7a;
+  text-align: center;
+  font-size: 13px;
+  padding: 20px;
+}
+
+/* Time-in badge */
+.time-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.time-in  { color: #2ed573; }
+.time-out { color: #ff6b7a; }
+
+/* ===========================
+   SCROLLBAR
+   =========================== */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.4); }
+
+/* ===========================
+   ANIMATIONS
+   =========================== */
+.slideInRight { animation-name: slideInRight; }
+.slideInDown  { animation-name: slideInDown; }
+.animated { animation-duration: 0.6s; animation-fill-mode: both; }
+
+@keyframes slideInRight {
+  from { transform: translate3d(40px, 0, 0); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+@keyframes slideInDown {
+  from { transform: translate3d(0, -30px, 0); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media screen and (max-width: 768px) {
+  section { padding: 24px 16px 40px; }
+  h1 { font-size: 22px !important; }
+  th, td { padding: 10px 12px; font-size: 12px; }
+}

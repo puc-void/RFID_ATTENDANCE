@@ -1,0 +1,246 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+/* ===========================
+   LOGIN PAGE
+   =========================== */
+
+body {
+  background: #080B12;
+  background-image:
+    radial-gradient(ellipse at 15% 60%, rgba(0, 240, 255, 0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 30%, rgba(189, 0, 255, 0.07) 0%, transparent 55%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+main > .slideInDown {
+  width: 100%;
+  max-width: 440px;
+}
+
+h1 {
+  font-size: 22px !important;
+  color: #a0aec0;
+  font-weight: 400;
+  font-family: 'Outfit', sans-serif !important;
+  text-align: center;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+h1#reset {
+  display: none;
+}
+
+/* ===========================
+   LOGIN CARD
+   =========================== */
+.login-page {
+  width: 100%;
+  padding: 0;
+  margin: 0 auto;
+}
+
+.form {
+  position: relative;
+  z-index: 1;
+  background: rgba(14, 19, 32, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 44px 40px;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 240, 255, 0.05);
+}
+
+/* Decorative top border */
+.form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00F0FF, #BD00FF, transparent);
+  border-radius: 0 0 2px 2px;
+}
+
+/* Logo/icon at top of card */
+.form::after {
+  content: '⬡';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 40px;
+  color: #00F0FF;
+  line-height: 1;
+  filter: drop-shadow(0 0 12px rgba(0,240,255,0.5));
+}
+
+/* ===========================
+   FORM INPUTS
+   =========================== */
+.form input {
+  font-family: 'Outfit', sans-serif;
+  outline: 0;
+  background: rgba(255, 255, 255, 0.04);
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  box-sizing: border-box;
+  font-size: 14px;
+  border-radius: 8px;
+  color: #f0f4ff;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form input::placeholder { color: rgba(160, 174, 192, 0.5); }
+
+.form input:focus {
+  background: rgba(0, 240, 255, 0.04);
+  border-color: rgba(0, 240, 255, 0.35);
+  box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.08);
+}
+
+/* ===========================
+   SUBMIT BUTTON
+   =========================== */
+.form button {
+  font-family: 'Outfit', sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: linear-gradient(135deg, #00F0FF, #BD00FF);
+  width: 100%;
+  border: 0;
+  padding: 15px;
+  color: #080B12;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-radius: 50px;
+  letter-spacing: 1.5px;
+  margin-top: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.form button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.form button:hover::before { opacity: 1; }
+.form button:hover,
+.form button:active,
+.form button:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 240, 255, 0.3), 0 4px 15px rgba(189, 0, 255, 0.2);
+}
+
+/* ===========================
+   LINKS / MESSAGES
+   =========================== */
+.form .message {
+  margin: 20px 0 0;
+  color: #4a5568;
+  font-size: 13px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.form .message a {
+  color: #00F0FF;
+  font-size: 13px;
+  text-decoration: none;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.form .message a:hover {
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+}
+
+/* ===========================
+   ALERTS
+   =========================== */
+.alert-danger {
+  background: rgba(255, 71, 87, 0.12) !important;
+  border: 1px solid rgba(255, 71, 87, 0.35) !important;
+  color: #ff6b7a !important;
+  border-radius: 8px !important;
+  font-size: 13px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.alert-success {
+  background: rgba(46, 213, 115, 0.12) !important;
+  border: 1px solid rgba(46, 213, 115, 0.35) !important;
+  color: #2ed573 !important;
+  border-radius: 8px !important;
+  font-size: 13px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.form .alert1 {
+  display: none;
+  width: 100%;
+  text-align: center;
+}
+
+/* Reset form hidden by default */
+.form .reset-form { display: none; }
+
+/* ===========================
+   ANIMATIONS
+   =========================== */
+.slideInRight { animation-name: slideInRight; }
+.slideInDown  { animation-name: slideInDown; }
+.animated {
+  animation-duration: 0.7s;
+  animation-fill-mode: both;
+}
+
+@keyframes slideInRight {
+  from { transform: translate3d(40px, 0, 0); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+@keyframes slideInDown {
+  from { transform: translate3d(0, -30px, 0); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media only screen and (max-width: 480px) {
+  .form {
+    padding: 36px 24px;
+    border-radius: 14px;
+  }
+
+  h1 { font-size: 18px !important; }
+}
