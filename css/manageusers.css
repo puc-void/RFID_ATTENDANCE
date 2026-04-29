@@ -1,0 +1,376 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+/* ===========================
+   MANAGE USERS PAGE
+   =========================== */
+
+main {
+  width: 100%;
+  display: block;
+}
+
+.page-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 28px 60px;
+}
+
+h1 {
+  font-size: 22px !important;
+  color: #f0f4ff;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif !important;
+  letter-spacing: -0.3px;
+  margin: 0 0 24px !important;
+  width: 100%;
+  text-shadow: none;
+  text-align: left;
+}
+
+/* ===========================
+   ADD/EDIT FORM
+   =========================== */
+.form-style-5 {
+  flex: 0 0 380px;
+  max-width: 380px;
+  height: auto;
+  padding: 32px;
+  margin: 0;
+  background: rgba(14, 19, 32, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  font-family: 'Outfit', sans-serif;
+  color: #d1d9e6;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Accent top border */
+.form-style-5::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00F0FF, #BD00FF);
+}
+
+.form-style-5 fieldset {
+  border: none;
+  margin: 0 0 20px;
+  padding: 0;
+}
+
+.form-style-5 legend {
+  font-size: 15px;
+  margin-bottom: 18px;
+  color: #f0f4ff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  width: 100%;
+}
+
+.form-style-5 .number {
+  background: linear-gradient(135deg, #00F0FF, #00c9a7);
+  color: #080B12;
+  height: 26px;
+  width: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Label */
+.form-style-5 label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Inputs */
+.form-style-5 input[type="text"],
+.form-style-5 input[type="email"],
+.form-style-5 input[type="number"],
+.form-style-5 input[type="time"] {
+  font-family: 'Outfit', sans-serif;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: 0;
+  padding: 12px 14px;
+  width: 100%;
+  box-sizing: border-box;
+  color: #f0f4ff;
+  margin-bottom: 14px;
+  transition: all 0.3s ease;
+}
+
+.form-style-5 input[type="text"]:focus,
+.form-style-5 input[type="email"]:focus,
+.form-style-5 input[type="number"]:focus,
+.form-style-5 input[type="time"]:focus {
+  background: rgba(0, 240, 255, 0.04);
+  border-color: rgba(0, 240, 255, 0.35);
+  box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.08);
+}
+
+.form-style-5 input::placeholder { color: rgba(74, 85, 104, 0.8); }
+
+/* Select */
+.form-style-5 select,
+.dev_sel {
+  font-family: 'Outfit', sans-serif;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: 0;
+  padding: 12px 14px;
+  width: 100%;
+  box-sizing: border-box;
+  color: #f0f4ff !important;
+  margin-bottom: 14px;
+  transition: all 0.3s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-style-5 select:focus,
+.dev_sel:focus {
+  background: rgba(0, 240, 255, 0.04) !important;
+  border-color: rgba(0, 240, 255, 0.35) !important;
+  box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.08);
+}
+
+/* Gender radio group */
+.gender-group {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.gender-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 13px;
+  color: #8892aa;
+}
+
+.gender-option:has(input:checked) {
+  background: rgba(0, 240, 255, 0.06);
+  border-color: rgba(0, 240, 255, 0.25);
+  color: #00F0FF;
+}
+
+/* Action Buttons */
+.form-style-5 button {
+  position: relative;
+  display: block;
+  padding: 13px;
+  font-family: 'Outfit', sans-serif;
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+  border: none;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+
+.user_add {
+  background: linear-gradient(135deg, #00F0FF, #00c9a7);
+  color: #080B12;
+}
+
+.user_add:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 240, 255, 0.3);
+}
+
+.user_upd {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.25) !important;
+  color: #ffc107;
+}
+
+.user_upd:hover {
+  background: rgba(255, 193, 7, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.2);
+}
+
+.user_rmo {
+  background: rgba(255, 71, 87, 0.08);
+  border: 1px solid rgba(255, 71, 87, 0.2) !important;
+  color: #ff6b7a;
+}
+
+.user_rmo:hover {
+  background: rgba(255, 71, 87, 0.14);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 71, 87, 0.2);
+}
+
+/* Alert feedback */
+.alert_user {
+  display: none;
+  width: 100%;
+  height: auto;
+  text-align: center;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+/* ===========================
+   USERS TABLE PANEL
+   =========================== */
+.section {
+  flex: 1;
+  min-width: 0;
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  float: none !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: rgba(14, 19, 32, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.section span {
+  display: none;
+}
+
+th {
+  padding: 14px 18px;
+  text-align: left !important;
+  font-weight: 600;
+  font-size: 11px;
+  color: #4a5568;
+  text-transform: uppercase;
+  border: none !important;
+  background: rgba(8, 11, 18, 0.9) !important;
+  letter-spacing: 1px;
+}
+
+th:first-child { padding-left: 22px; }
+th:last-child  { padding-right: 22px; }
+
+td {
+  padding: 14px 18px;
+  text-align: left;
+  font-weight: 400;
+  font-size: 14px;
+  color: #d1d9e6;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+td:first-child { padding-left: 22px; }
+td:last-child  { padding-right: 22px; }
+
+tbody {
+  border: none !important;
+}
+
+tbody button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: #ff6b7a;
+  padding: 5px 10px;
+  border-radius: 6px;
+  transition: all 0.25s ease;
+  display: inline-block;
+  margin: 0 auto;
+}
+
+tbody button:hover {
+  background: rgba(255, 71, 87, 0.08);
+  color: #ff4757;
+}
+
+/* ===========================
+   SCROLLBAR
+   =========================== */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.2); border-radius: 3px; }
+
+/* ===========================
+   ANIMATIONS
+   =========================== */
+.slideInRight { animation-name: slideInRight; }
+.slideInDown  { animation-name: slideInDown; }
+.animated { animation-duration: 0.6s; animation-fill-mode: both; }
+
+@keyframes slideInRight {
+  from { transform: translate3d(40px, 0, 0); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+@keyframes slideInDown {
+  from { transform: translate3d(0, -30px, 0); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media screen and (max-width: 900px) {
+  main {
+    flex-direction: column;
+    padding: 24px 16px 40px;
+  }
+
+  .form-style-5 {
+    flex: none;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .section {
+    width: 100%;
+  }
+
+  h1 { font-size: 20px !important; }
+  th, td { padding: 10px 12px; font-size: 12px; }
+}

@@ -1,0 +1,461 @@
+/* ===========================
+   GLOBAL RESET & BASE STYLES
+   =========================== */
+*, *::before, *::after {
+  text-decoration: none;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --cyan: #00F0FF;
+  --purple: #BD00FF;
+  --bg-primary: #080B12;
+  --bg-secondary: #0E1320;
+  --bg-card: rgba(14, 19, 32, 0.7);
+  --bg-glass: rgba(255, 255, 255, 0.04);
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-cyan: rgba(0, 240, 255, 0.3);
+  --text-primary: #f0f4ff;
+  --text-secondary: #8892aa;
+  --text-muted: #4a5568;
+  --danger: #ff4757;
+  --success: #2ed573;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.7);
+  --shadow-cyan: 0 0 20px rgba(0, 240, 255, 0.15);
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  background: var(--bg-primary);
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(189, 0, 255, 0.04) 0%, transparent 50%);
+  background-attachment: fixed;
+  font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+header, main {
+  width: 100%;
+  display: block;
+}
+
+/* ===========================
+   HEADER / LOGO
+   =========================== */
+.header {
+  padding: 0 32px;
+  width: 100%;
+  height: 72px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+}
+
+.logo a {
+  text-decoration: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 26px;
+  color: var(--cyan);
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: var(--transition);
+}
+
+.logo a::before {
+  content: '⬡';
+  font-size: 22px;
+  opacity: 0.8;
+  animation: pulse-logo 3s ease-in-out infinite;
+}
+
+.logo a:hover {
+  text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+}
+
+@keyframes pulse-logo {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* ===========================
+   NAVIGATION BAR
+   =========================== */
+.topnav {
+  background: rgba(8, 11, 18, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 0 rgba(0, 240, 255, 0.05), var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topnav a {
+  float: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 18px 22px;
+  text-decoration: none !important;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: var(--transition);
+  position: relative;
+  white-space: nowrap;
+}
+
+.topnav a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  transition: var(--transition);
+  border-radius: 2px 2px 0 0;
+}
+
+.topnav a:hover::after,
+.topnav a:focus::after {
+  width: 80%;
+  left: 10%;
+}
+
+.topnav a:hover,
+.topnav a:focus {
+  color: var(--cyan);
+}
+
+.topnav a.active-link {
+  color: var(--cyan);
+}
+
+.topnav a.active-link::after {
+  width: 80%;
+  left: 10%;
+}
+
+.topnav .icon {
+  display: none;
+  color: var(--text-secondary);
+}
+
+/* logout link */
+.topnav a[href="logout.php"] {
+  color: var(--danger);
+  opacity: 0.8;
+}
+.topnav a[href="logout.php"]:hover {
+  color: var(--danger);
+  opacity: 1;
+}
+.topnav a[href="logout.php"]::after {
+  background: var(--danger);
+}
+
+/* ===========================
+   TABLE BASE STYLES
+   =========================== */
+tbody tr:nth-child(even) { background-color: rgba(255,255,255,0.015); }
+tbody tr:nth-child(odd)  { background-color: transparent; }
+
+tbody tr {
+  transition: var(--transition);
+}
+
+tbody tr:hover {
+  background-color: rgba(0, 240, 255, 0.04) !important;
+}
+
+/* ===========================
+   NOTIFICATION TOASTS
+   =========================== */
+.up_info1, .up_info2 {
+  display: none;
+  min-width: 280px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  text-align: center;
+  position: fixed;
+  border-radius: var(--radius-sm);
+  top: 88px;
+  right: 20px;
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  animation: slideInToast 0.4s ease;
+}
+
+@keyframes slideInToast {
+  from { transform: translateX(100px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+.up_info1 {
+  background: rgba(255, 71, 87, 0.15) !important;
+  border: 1px solid rgba(255, 71, 87, 0.4);
+  color: #ff6b7a !important;
+}
+
+.up_info2 {
+  background: rgba(46, 213, 115, 0.15) !important;
+  border: 1px solid rgba(46, 213, 115, 0.4);
+  color: #2ed573 !important;
+}
+
+/* ===========================
+   MODAL STYLES
+   =========================== */
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+.modal-content {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  overflow: hidden;
+}
+
+.modal-header {
+  background: rgba(0, 240, 255, 0.03) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  padding: 20px 24px !important;
+}
+
+.modal-header .modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.modal-body {
+  background: transparent !important;
+  padding: 24px !important;
+}
+
+.modal-footer {
+  background: transparent !important;
+  border-top: 1px solid var(--border-subtle) !important;
+  padding: 16px 24px !important;
+  gap: 10px;
+}
+
+/* Modal inputs */
+.modal-body label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-body input[type="text"],
+.modal-body input[type="email"],
+.modal-body input[type="date"],
+.modal-body input[type="time"],
+.modal-body select,
+.modal-body input[type="password"] {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-glass) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  outline: 0;
+  padding: 12px 16px;
+  width: 100%;
+  box-sizing: border-box;
+  color: var(--text-primary) !important;
+  margin-bottom: 20px;
+  transition: var(--transition);
+}
+
+.modal-body input:focus,
+.modal-body select:focus {
+  background: rgba(0, 240, 255, 0.04) !important;
+  border-color: var(--border-cyan) !important;
+  box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.08) !important;
+}
+
+/* Close button */
+.close {
+  position: absolute;
+  right: 20px;
+  top: 16px;
+  color: var(--text-secondary) !important;
+  font-size: 24px;
+  font-weight: 300;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: var(--transition);
+  background: none;
+  border: none;
+  line-height: 1;
+}
+
+.close:hover,
+.close:focus {
+  color: var(--danger) !important;
+  opacity: 1;
+}
+
+/* Modal buttons */
+.btn-success {
+  background: linear-gradient(135deg, #00c9a7, #00F0FF) !important;
+  border: none !important;
+  color: #080B12 !important;
+  font-weight: 600 !important;
+  padding: 10px 22px !important;
+  border-radius: 25px !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 14px !important;
+  transition: var(--transition) !important;
+  letter-spacing: 0.3px;
+}
+
+.btn-success:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 240, 255, 0.3) !important;
+}
+
+.btn-secondary {
+  background: var(--bg-glass) !important;
+  border: 1px solid var(--border-subtle) !important;
+  color: var(--text-secondary) !important;
+  font-weight: 500 !important;
+  padding: 10px 22px !important;
+  border-radius: 25px !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 14px !important;
+  transition: var(--transition) !important;
+}
+
+.btn-secondary:hover {
+  color: var(--text-primary) !important;
+  border-color: rgba(255,255,255,0.15) !important;
+}
+
+/* ===========================
+   ANIMATION CLASSES
+   =========================== */
+.animate {
+  animation: modalZoom 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalZoom {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* ===========================
+   BOOTBOX OVERRIDES
+   =========================== */
+.bootbox-body {
+  color: var(--text-primary) !important;
+  font-family: 'Outfit', sans-serif !important;
+}
+
+/* ===========================
+   SCROLLBAR
+   =========================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 240, 255, 0.4);
+}
+
+/* ===========================
+   UTILITY CLASSES
+   =========================== */
+.slideInRight { animation-name: slideInRight; }
+.slideInDown  { animation-name: slideInDown; }
+.animated {
+  animation-duration: 0.6s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideInRight {
+  from { transform: translate3d(40px, 0, 0); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+@keyframes slideInDown {
+  from { transform: translate3d(0, -30px, 0); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media screen and (max-width: 768px) {
+  .topnav {
+    justify-content: flex-start;
+    padding: 0;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  .topnav a:not(:first-child):not(.icon) { display: none; }
+
+  .topnav a.icon {
+    display: flex;
+    margin-left: auto;
+    padding: 18px 20px;
+  }
+
+  .topnav.responsive a {
+    display: flex;
+    width: 100%;
+    text-align: left;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .topnav.responsive a.icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: auto;
+    border: none;
+  }
+
+  .modal-content { width: 94% !important; margin: 0 auto; }
+
+  .header {
+    height: 60px;
+    padding: 0 16px;
+  }
+
+  .logo a { font-size: 20px; }
+}

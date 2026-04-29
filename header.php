@@ -1,0 +1,132 @@
+<head>    
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<link rel='stylesheet' type='text/css' href="css/bootstrap.css"/>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/header.css"/>
+</head>
+<header>
+<div class="header">
+	<div class="logo">
+		<a href="index.php">RFID Attendance</a>
+	</div>
+</div>
+<?php
+  if (isset($_GET['error'])) {
+		if ($_GET['error'] == "wrongpasswordup") {
+			echo '	<script type="text/javascript">
+					 	setTimeout(function () {
+			                $(".up_info1").fadeIn(200);
+			                $(".up_info1").text("The password is wrong!");
+			                $("#admin-account").modal("show");
+			              	}, 500);
+			              	setTimeout(function () {
+			                	$(".up_info1").fadeOut(1000);
+			              	}, 3000);
+					</script>';
+		}
+	} 
+	if (isset($_GET['success'])) {
+		if ($_GET['success'] == "updated") {
+			echo '	<script type="text/javascript">
+			 			setTimeout(function () {
+			                $(".up_info2").fadeIn(200);
+			                $(".up_info2").text("Your Account has been updated");
+              			}, 500);
+              			setTimeout(function () {
+                			$(".up_info2").fadeOut(1000);
+              			}, 3000);
+					</script>';
+		}
+	}
+	if (isset($_GET['login'])) {
+	    if ($_GET['login'] == "success") {
+	      echo '<script type="text/javascript">
+	              
+	              setTimeout(function () {
+	                $(".up_info2").fadeIn(200);
+	                $(".up_info2").text("You successfully logged in");
+	              }, 500);
+
+	              setTimeout(function () {
+	                $(".up_info2").fadeOut(1000);
+	              }, 4000);
+	            </script> ';
+	    }
+	  }
+?>
+<nav class="topnav" id="myTopnav">
+	<?php
+	// Detect current page for active link highlighting
+	$current_page = basename($_SERVER['PHP_SELF']);
+	?>
+	<a href="index.php" <?php echo ($current_page == 'index.php') ? 'class="active-link"' : ''; ?>>
+		<i class="fa fa-users" style="font-size:13px;"></i> Users
+	</a>
+    <a href="ManageUsers.php" <?php echo ($current_page == 'ManageUsers.php') ? 'class="active-link"' : ''; ?>>
+    	<i class="fa fa-user-plus" style="font-size:13px;"></i> Manage Users
+    </a>
+    <a href="UsersLog.php" <?php echo ($current_page == 'UsersLog.php') ? 'class="active-link"' : ''; ?>>
+    	<i class="fa fa-clock-o" style="font-size:13px;"></i> Users Log
+    </a>
+    <a href="devices.php" <?php echo ($current_page == 'devices.php') ? 'class="active-link"' : ''; ?>>
+    	<i class="fa fa-microchip" style="font-size:13px;"></i> Devices
+    </a>
+    <?php
+    	if (isset($_SESSION['Admin-name'])) {
+    		echo '<a href="#" data-toggle="modal" data-target="#admin-account" style="margin-left:auto;">
+    					<i class="fa fa-user-circle-o" style="font-size:13px;"></i> '.$_SESSION['Admin-name'].'
+    				</a>';
+    		echo '<a href="logout.php"><i class="fa fa-sign-out" style="font-size:13px;"></i> Log Out</a>';
+    	}
+    	else{
+    		echo '<a href="login.php" style="margin-left:auto;"><i class="fa fa-sign-in" style="font-size:13px;"></i> Log In</a>';
+    	}
+    ?>
+    <a href="javascript:void(0);" class="icon" onclick="navFunction()">
+	  <i class="fa fa-bars"></i></a>
+</nav>
+<div class="up_info1"></div>
+<div class="up_info2"></div>
+</header>
+<script>
+	function navFunction() {
+	  var x = document.getElementById("myTopnav");
+	  if (x.className === "topnav") {
+	    x.className += " responsive";
+	  } else {
+	    x.className = "topnav";
+	  }
+	}
+</script>
+
+<!-- Account Update -->
+<div class="modal fade" id="admin-account" tabindex="-1" role="dialog" aria-labelledby="Admin Update" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content animate">
+      <div class="modal-header">
+        <h3 class="modal-title" id="exampleModalLongTitle">Update Account Info</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="ac_update.php" method="POST" enctype="multipart/form-data">
+	      <div class="modal-body">
+	      	<label for="up_name">Admin Name</label>
+	      	<input type="text" name="up_name" id="up_name" placeholder="Enter your name..." value="<?php echo isset($_SESSION['Admin-name']) ? htmlspecialchars($_SESSION['Admin-name']) : ''; ?>" required/>
+	      	<label for="up_email">Admin E-mail</label>
+	      	<input type="email" name="up_email" id="up_email" placeholder="Enter your email..." value="<?php echo isset($_SESSION['Admin-email']) ? htmlspecialchars($_SESSION['Admin-email']) : ''; ?>" required/>
+	      	<label for="up_pwd">Current Password</label>
+	      	<input type="password" name="up_pwd" id="up_pwd" placeholder="Enter current password to confirm..." required/>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="submit" name="update" class="btn btn-success">Save Changes</button>
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+	      </div>
+	  </form>
+    </div>
+  </div>
+</div>
+<!-- //Account Update -->
