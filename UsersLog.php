@@ -170,10 +170,15 @@ if (!isset($_SESSION['Admin-name'])) {
       </div>
     </div>
     <!-- //Log filter -->
+<<<<<<< HEAD
     <div class="section" style="margin-top: 30px;">
       <div class="slideInRight animated">
         <div id="userslog"></div>
       </div>
+=======
+    <div class="slideInRight animated">
+      <div id="userslog"></div>
+>>>>>>> 41d354e88a6a2d63602ba4dc7f0f94dc13828f83
     </div>
 </section>
 </main>

@@ -77,11 +77,16 @@ if (isset($_POST['log_date'])) {
 // ----------------------------------------------------------
 // FINAL QUERY
 // ----------------------------------------------------------
+<<<<<<< HEAD
 $sql = "SELECT *, (SELECT gender FROM users WHERE card_uid = users_logs.card_uid LIMIT 1) as gender FROM users_logs WHERE ".$_SESSION['searchQuery']." ORDER BY id DESC";
+=======
+$sql = "SELECT * FROM users_logs WHERE ".$_SESSION['searchQuery']." ORDER BY id DESC";
+>>>>>>> 41d354e88a6a2d63602ba4dc7f0f94dc13828f83
 $result = mysqli_query($conn, $sql);
 
 ?>
 
+<<<<<<< HEAD
 <div class="table-responsive" style="max-height: 800px;"> 
   <table class="table">
     <thead>
@@ -162,4 +167,41 @@ $result = mysqli_query($conn, $sql);
     ?>
     </tbody>
   </table>
+=======
+<div class="table-responsive" style="max-height: 500px;">
+<table class="table">
+<thead class="table-primary">
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Serial Number</th>
+<th>Card UID</th>
+<th>Device Dep</th>
+<th>Date</th>
+<th>Time In</th>
+<th>Time Out</th>
+</tr>
+</thead>
+<tbody class="table-secondary">
+<?php
+if ($result && mysqli_num_rows($result) > 0) {
+  while ($row = mysqli_fetch_assoc($result)) {
+    ?>
+    <tr>
+    <td><?= $row['id'] ?></td>
+    <td><?= $row['username'] ?></td>
+    <td><span style="font-weight: 500;"><?php echo ($row['serialnumber'] != 0) ? $row['serialnumber'] : '---'; ?></span></td>
+    <td><?= $row['card_uid'] ?></td>
+    <td><?= $row['device_dep'] ?></td>
+    <td><?= $row['checkindate'] ?></td>
+    <td><?= $row['timein'] ?></td>
+    <td><?= $row['timeout'] ?></td>
+    </tr>
+    <?php
+  }
+}
+?>
+</tbody>
+</table>
+>>>>>>> 41d354e88a6a2d63602ba4dc7f0f94dc13828f83
 </div>

@@ -159,6 +159,7 @@ h1 {
   margin: 0;
 }
 
+<<<<<<< HEAD
 .time label:first-of-type {
   border-radius: 6px 0 0 6px;
 }
@@ -167,19 +168,28 @@ h1 {
   border-radius: 0 6px 6px 0;
   border-left: none;
 }
+=======
+.time label:first-of-type { border-radius: 6px 0 0 6px; }
+.time label:last-of-type  { border-radius: 0 6px 6px 0; border-left: none; }
+>>>>>>> 41d354e88a6a2d63602ba4dc7f0f94dc13828f83
 
 .time label:hover {
   background: rgba(255, 255, 255, 0.06);
   color: #a0aec0;
 }
 
+<<<<<<< HEAD
 .time input:checked+label {
+=======
+.time input:checked + label {
+>>>>>>> 41d354e88a6a2d63602ba4dc7f0f94dc13828f83
   background: rgba(0, 240, 255, 0.1);
   color: #00F0FF;
   border-color: rgba(0, 240, 255, 0.3);
 }
 
 /* ===========================
+<<<<<<< HEAD
    USERS TABLE PANEL
    =========================== */
 .section {
@@ -211,6 +221,17 @@ h1 {
   overflow: hidden;
   box-shadow: none;
   margin-top: 0;
+=======
+   LOG TABLE
+   =========================== */
+.table-card {
+  background: rgba(14, 19, 32, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  margin-top: 8px;
+>>>>>>> 41d354e88a6a2d63602ba4dc7f0f94dc13828f83
 }
 
 th {
@@ -251,6 +272,7 @@ td {
   letter-spacing: 0.5px;
 }
 
+<<<<<<< HEAD
 .time-in {
   color: #2ed573;
 }
@@ -258,10 +280,15 @@ td {
 .time-out {
   color: #ff6b7a;
 }
+=======
+.time-in  { color: #2ed573; }
+.time-out { color: #ff6b7a; }
+>>>>>>> 41d354e88a6a2d63602ba4dc7f0f94dc13828f83
 
 /* ===========================
    SCROLLBAR
    =========================== */
+<<<<<<< HEAD
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -279,10 +306,17 @@ td {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 240, 255, 0.4);
 }
+=======
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.4); }
+>>>>>>> 41d354e88a6a2d63602ba4dc7f0f94dc13828f83
 
 /* ===========================
    ANIMATIONS
    =========================== */
+<<<<<<< HEAD
 .slideInRight {
   animation-name: slideInRight;
 }
@@ -318,12 +352,27 @@ td {
     transform: translate3d(0, 0, 0);
     opacity: 1;
   }
+=======
+.slideInRight { animation-name: slideInRight; }
+.slideInDown  { animation-name: slideInDown; }
+.animated { animation-duration: 0.6s; animation-fill-mode: both; }
+
+@keyframes slideInRight {
+  from { transform: translate3d(40px, 0, 0); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+@keyframes slideInDown {
+  from { transform: translate3d(0, -30px, 0); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0); opacity: 1; }
+>>>>>>> 41d354e88a6a2d63602ba4dc7f0f94dc13828f83
 }
 
 /* ===========================
    RESPONSIVE
    =========================== */
 @media screen and (max-width: 768px) {
+<<<<<<< HEAD
   section {
     padding: 24px 16px 40px;
   }
@@ -337,4 +386,9 @@ td {
     padding: 10px 12px;
     font-size: 12px;
   }
+=======
+  section { padding: 24px 16px 40px; }
+  h1 { font-size: 22px !important; }
+  th, td { padding: 10px 12px; font-size: 12px; }
+>>>>>>> 41d354e88a6a2d63602ba4dc7f0f94dc13828f83
 }
