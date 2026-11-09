@@ -68,6 +68,7 @@ CREATE TABLE `users` (
   `username` varchar(30) NOT NULL DEFAULT 'None',
   `serialnumber` double NOT NULL DEFAULT '0',
   `gender` varchar(10) NOT NULL DEFAULT 'None',
+  `phone` varchar(30) NOT NULL DEFAULT 'None',
   `email` varchar(50) NOT NULL DEFAULT 'None',
   `card_uid` varchar(30) NOT NULL,
   `card_select` tinyint(1) NOT NULL DEFAULT '0',
@@ -90,11 +91,48 @@ CREATE TABLE `users_logs` (
   `card_uid` varchar(30) NOT NULL,
   `device_uid` varchar(20) NOT NULL,
   `device_dep` varchar(20) NOT NULL,
+  `course_id` int(11) NOT NULL DEFAULT '0',
+  `course_code` varchar(30) NOT NULL DEFAULT '',
+  `course_title` varchar(120) NOT NULL DEFAULT '',
   `checkindate` date NOT NULL,
   `timein` time NOT NULL,
   `timeout` time NOT NULL,
   `card_out` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `departments`
+--
+
+CREATE TABLE IF NOT EXISTS `departments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `dept_code` varchar(30) NOT NULL,
+  `dept_name` varchar(120) NOT NULL,
+  `created_at` date NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `dept_code` (`dept_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `courses`
+--
+
+CREATE TABLE IF NOT EXISTS `courses` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `course_code` varchar(30) NOT NULL,
+  `course_title` varchar(120) NOT NULL,
+  `dept_name` varchar(50) NOT NULL,
+  `teacher_name` varchar(80) NOT NULL DEFAULT '',
+  `credit` decimal(3,1) NOT NULL DEFAULT '3.0',
+  `is_active_session` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` date NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `course_code` (`course_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Indexes for dumped tables

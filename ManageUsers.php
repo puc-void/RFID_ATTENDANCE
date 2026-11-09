@@ -2,6 +2,7 @@
 session_start();
 if (!isset($_SESSION['Admin-name'])) {
   header("location: login.php");
+  exit();
 }
 ?>
 <!DOCTYPE html>
@@ -22,59 +23,80 @@ if (!isset($_SESSION['Admin-name'])) {
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<script src="js/manage_users.js"></script>
 	<script>
-	  	$(window).on("load resize ", function() {
-		    var scrollWidth = $('.tbl-content').width() - $('.tbl-content table').width();
-		    $('.tbl-header').css({'padding-right':scrollWidth});
-		}).resize();
-	</script>
-	<script>
+	  function refreshManageUsersTable() {
+	    $.ajax({
+	      url: "manage_users_up.php"
+	    }).done(function(data) {
+	      $('#manage_users').html(data);
+	      var q = $('#manageSearchInput').val();
+	      if (q) filterTableRows(q, '#manageUsersTable');
+	    });
+	  }
+
 	  $(document).ready(function(){
-	  	  $.ajax({
-	        url: "manage_users_up.php"
-	        }).done(function(data) {
-	        $('#manage_users').html(data);
-	      });
+	    refreshManageUsersTable();
 	    setInterval(function(){
-	      $.ajax({
-	        url: "manage_users_up.php"
-	        }).done(function(data) {
-	        $('#manage_users').html(data);
-	      });
-	    },5000);
+	      refreshManageUsersTable();
+	    }, 5000);
 	  });
 	</script>
 </head>
 <body>
 <?php include 'header.php'; ?>
 <main>
-	<div class="page-wrapper" style="width: 100%; display: flex; flex-direction: column; gap: 0;">
-		<h1 class="slideInDown animated">User <span style="color:#00F0FF;">Management</span></h1>
-		
-		<div style="display: flex; flex-wrap: wrap; gap: 28px; width: 100%; align-items: flex-start;">
-			<!-- Form Section -->
-			<div class="form-style-5 slideInDown animated">
-				<form enctype="multipart/form-data">
+	<div class="page-wrapper">
+		<div class="page-header">
+			<div>
+				<h1>User <span class="accent">Management</span></h1>
+				<p class="page-subtitle">Scan a card in Enrollment mode, click its UID badge in the table, and assign user credentials</p>
+			</div>
+			<div style="display:flex;align-items:center;gap:10px;">
+				<div class="stat-badge">
+					<span class="dot"></span>
+					Live Sync (5s)
+				</div>
+				<button type="button" class="action-btn-sm" onclick="refreshManageUsersTable(); showToast('Refreshed', 'User table synced with database.', 'info', 2000);">
+					<i class="fa fa-refresh"></i> Sync Now
+				</button>
+			</div>
+		</div>
+
+		<div class="manage-grid">
+			<!-- Left: shadcn Form Card -->
+			<div class="form-style-5">
+				<div class="form-card-header">
+					<div class="form-card-title">
+						<i class="fa fa-id-card" style="color:var(--primary);"></i>
+						Card Assignment
+					</div>
+					<span id="selectedCardBadge" class="selected-indicator">No Card Selected</span>
+				</div>
+
+				<form enctype="multipart/form-data" id="manageUserForm" onsubmit="return false;">
 					<div class="alert_user"></div>
 					<fieldset>
 						<legend><span class="number">1</span> User Credentials</legend>
 						<input type="hidden" name="user_id" id="user_id">
-						
+
 						<label for="name">Full Name</label>
-						<input type="text" name="name" id="name" placeholder="E.g. John Doe">
-						
-						<label for="number">Serial Number</label>
-						<input type="text" name="number" id="number" placeholder="E.g. 123456">
-						
+						<input type="text" name="name" id="name" placeholder="e.g. John Doe">
+
+						<label for="number">Student / Serial ID</label>
+						<input type="text" name="number" id="number" placeholder="e.g. 2024105">
+
+						<label for="phone">Phone Number</label>
+						<input type="text" name="phone" id="phone" placeholder="e.g. 01700000000">
+
 						<label for="email">Email Address</label>
-						<input type="email" name="email" id="email" placeholder="E.g. john@example.com">
+						<input type="email" name="email" id="email" placeholder="e.g. john@university.edu">
 					</fieldset>
-					
-					<fieldset>
-						<legend><span class="number">2</span> Assignment</legend>
-						
+
+					<fieldset style="margin-bottom: 6px;">
+						<legend><span class="number">2</span> Department &amp; Gender</legend>
+
 						<label for="dev_sel">Assigned Department</label>
 						<select class="dev_sel" name="dev_sel" id="dev_sel">
-							<option value="0">Default (All Departments)</option>
+							<option value="0">All Departments</option>
 							<?php
 								require 'connectDB.php';
 								$sql = "SELECT * FROM devices ORDER BY device_name ASC";
@@ -83,7 +105,7 @@ if (!isset($_SESSION['Admin-name'])) {
 									mysqli_stmt_execute($result);
 									$resultl = mysqli_stmt_get_result($result);
 									while ($row = mysqli_fetch_assoc($resultl)) {
-										echo '<option value="'.$row['device_uid'].'">'.$row['device_dep'].'</option>';
+										echo '<option value="'.htmlspecialchars($row['device_uid']).'">'.htmlspecialchars($row['device_dep']).'</option>';
 									}
 								}
 							?>
@@ -93,31 +115,79 @@ if (!isset($_SESSION['Admin-name'])) {
 						<div class="gender-group">
 							<label class="gender-option">
 								<input type="radio" name="gender" class="gender" value="Male" checked="checked">
-								<span>Male</span>
+								<span><i class="fa fa-mars"></i> Male</span>
 							</label>
 							<label class="gender-option">
 								<input type="radio" name="gender" class="gender" value="Female">
-								<span>Female</span>
+								<span><i class="fa fa-venus"></i> Female</span>
 							</label>
 						</div>
 					</fieldset>
 
-					<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-						<button type="button" name="user_add" class="user_add">+ Register User</button>
-						<button type="button" name="user_upd" class="user_upd">✎ Update Information</button>
-						<button type="button" name="user_rmo" class="user_rmo">✕ Terminate User</button>
+					<div class="form-actions-stack">
+						<button type="button" name="user_add" class="user_add">
+							<i class="fa fa-user-plus"></i> Register Selected Card
+						</button>
+						<div class="form-actions-row">
+							<button type="button" name="user_upd" class="user_upd">
+								<i class="fa fa-check"></i> Update Info
+							</button>
+							<button type="button" name="user_rmo" class="user_rmo">
+								<i class="fa fa-trash-o"></i> Remove User
+							</button>
+						</div>
+						<button type="button" class="action-btn-sm" style="justify-content:center;width:100%;" onclick="clearUserForm()">
+							<i class="fa fa-eraser"></i> Clear Form
+						</button>
 					</div>
 				</form>
 			</div>
 
-			<!-- Table Section -->
-			<div class="section" style="flex: 1; min-width: 400px;">
-				<div class="slideInRight animated">
-					<div id="manage_users"></div>
+			<!-- Right: Scanned & Registered Cards Table -->
+			<div class="table-card">
+				<div class="toolbar-wrap">
+					<div class="search-box-wrap">
+						<i class="fa fa-search search-icon"></i>
+						<input type="text" id="manageSearchInput" class="search-input" placeholder="Filter cards by UID, name, serial, department..." oninput="handleManageSearch(this.value)">
+						<button type="button" id="manageSearchClear" class="search-clear-btn" onclick="clearManageSearch()">
+							<i class="fa fa-times"></i>
+						</button>
+					</div>
+					<div class="actions-wrap">
+						<span style="font-size:12px;color:var(--text-muted);">
+							<i class="fa fa-hand-pointer-o"></i> Click a <b>Card UID</b> to load into form
+						</span>
+					</div>
 				</div>
+				<div id="manage_users"></div>
 			</div>
 		</div>
 	</div>
 </main>
+<script>
+	function handleManageSearch(val) {
+		var btn = document.getElementById('manageSearchClear');
+		if (btn) btn.style.display = val.length > 0 ? 'block' : 'none';
+		filterTableRows(val, '#manageUsersTable');
+	}
+	function clearManageSearch() {
+		var inp = document.getElementById('manageSearchInput');
+		if (inp) {
+			inp.value = '';
+			handleManageSearch('');
+			inp.focus();
+		}
+	}
+	function clearUserForm() {
+		$('#user_id').val('');
+		$('#name').val('');
+		$('#number').val('');
+		$('#phone').val('');
+		$('#email').val('');
+		$('#dev_sel').val('0');
+		$('#selectedCardBadge').removeClass('active').text('No Card Selected');
+		showToast('Form Cleared', 'Ready for a new card selection.', 'info', 2000);
+	}
+</script>
 </body>
 </html>

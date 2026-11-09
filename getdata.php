@@ -3,20 +3,48 @@ require 'connectDB.php';
 date_default_timezone_set('Asia/Dhaka');
 
 // ================= TELEGRAM CONFIG =================
-$botToken = "YOUR_BOT_TOKEN";
-$chatID   = "YOUR_CHAT_ID";
+// Values are managed by telegram_settings.php. Notifications stay off until configured.
+$botToken = '';
+$chatID = '';
+$settingsResult = @mysqli_query($conn, "SELECT setting_key, setting_value FROM app_settings WHERE setting_key IN ('telegram_bot_token', 'telegram_chat_id', 'telegram_enabled')");
+if ($settingsResult) {
+    $settings = array();
+    while ($setting = mysqli_fetch_assoc($settingsResult)) {
+        $settings[$setting['setting_key']] = $setting['setting_value'];
+    }
+    if (($settings['telegram_enabled'] ?? '0') === '1') {
+        $botToken = trim($settings['telegram_bot_token'] ?? '');
+        $chatID = trim($settings['telegram_chat_id'] ?? '');
+    }
+}
 
-function sendTelegram($msg){
+function sendTelegram($msg) {
     global $botToken, $chatID;
-
-    $url = "https://api.telegram.org/bot".$botToken."/sendMessage?chat_id=".$chatID."&text=".urlencode($msg);
-    file_get_contents($url);
+    if ($botToken === '' || $chatID === '') {
+        return;
+    }
+    $url = "https://api.telegram.org/bot" . $botToken . "/sendMessage";
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(array(
+            'chat_id' => $chatID,
+            'text' => $msg
+        )));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        @curl_exec($ch);
+        curl_close($ch);
+    } else {
+        @file_get_contents($url . "?chat_id=" . urlencode($chatID) . "&text=" . urlencode($msg));
+    }
 }
 // ===================================================
 
 // Current Date & Time
 $d = date("Y-m-d");
 $t = date("H:i:s");
+$formattedDateTime = date("d M Y, h:i:s A");
 
 // ================= CHECK REQUEST =================
 if (!isset($_GET['card_uid']) || !isset($_GET['device_token'])) {
@@ -76,16 +104,35 @@ if ($device_mode == 1) {
         exit();
     }
 
-    if ($userRow['device_uid'] != 0 && $userRow['device_uid'] != $device_uid) {
+    if ($userRow['device_uid'] != 0 && $userRow['device_uid'] != $device_uid && $userRow['device_dep'] !== $device_dep && $userRow['device_dep'] !== 'All') {
         echo "Not Allowed!";
         exit();
     }
 
     $Uname  = $userRow['username'];
     $Number = $userRow['serialnumber'];
+    $Gender = (!empty($userRow['gender']) && $userRow['gender'] !== 'None') ? $userRow['gender'] : 'N/A';
+    $Phone  = (!empty($userRow['phone']) && $userRow['phone'] !== 'None') ? $userRow['phone'] : 'N/A';
+    $Email  = (!empty($userRow['email']) && $userRow['email'] !== 'None') ? $userRow['email'] : 'N/A';
 
-    // Check if already checked IN
-    $sql = "SELECT * FROM users_logs WHERE card_uid=? AND checkindate=? AND card_out=0";
+    // Resolve Active Course for this Department (or global active course)
+    $course_id = 0;
+    $course_code = '';
+    $course_title = '';
+    $courseStmt = mysqli_prepare($conn, "SELECT id, course_code, course_title FROM courses WHERE (dept_name=? OR dept_name='All') ORDER BY is_active_session DESC, id ASC LIMIT 1");
+    if ($courseStmt) {
+        mysqli_stmt_bind_param($courseStmt, "s", $device_dep);
+        mysqli_stmt_execute($courseStmt);
+        $courseRes = mysqli_stmt_get_result($courseStmt);
+        if ($courseRow = mysqli_fetch_assoc($courseRes)) {
+            $course_id = (int)$courseRow['id'];
+            $course_code = $courseRow['course_code'];
+            $course_title = $courseRow['course_title'];
+        }
+    }
+
+    // Check if already checked IN today for this course
+    $sql = "SELECT * FROM users_logs WHERE card_uid=? AND checkindate=? AND course_id=? AND card_out=0";
     $stmt = mysqli_stmt_init($conn);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -93,16 +140,18 @@ if ($device_mode == 1) {
         exit();
     }
 
-    mysqli_stmt_bind_param($stmt, "ss", $card_uid, $d);
+    mysqli_stmt_bind_param($stmt, "ssi", $card_uid, $d, $course_id);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
+
+    $courseLine = ($course_code !== '') ? "📚 Course: $course_code ($course_title)\n" : "";
 
     // ================= IN TIME =================
     if (!mysqli_fetch_assoc($result)) {
 
         $sql = "INSERT INTO users_logs
-        (username, serialnumber, card_uid, device_uid, device_dep, checkindate, timein, timeout, card_out)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)";
+        (username, serialnumber, card_uid, device_uid, device_dep, course_id, course_code, course_title, checkindate, timein, timeout, card_out)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
 
         $stmt = mysqli_stmt_init($conn);
 
@@ -113,19 +162,24 @@ if ($device_mode == 1) {
 
         $timeout = "00:00:00";
 
-        mysqli_stmt_bind_param($stmt, "ssssssss",
-            $Uname, $Number, $card_uid, $device_uid, $device_dep, $d, $t, $timeout
+        mysqli_stmt_bind_param($stmt, "sssssisssss",
+            $Uname, $Number, $card_uid, $device_uid, $device_dep, $course_id, $course_code, $course_title, $d, $t, $timeout
         );
 
         mysqli_stmt_execute($stmt);
 
-        // 🔔 TELEGRAM (IN)
-        $msg = "🟢 IN TIME\n"
-             . "Name: $Uname\n"
-             . "ID: $Number\n"
-             . "Department: $device_dep\n"
-             . "Time: $t\n"
-             . "Date: $d";
+        // TELEGRAM (IN)
+        $msg = "✅ STUDENT CHECK IN\n"
+             . "━━━━━━━━━━━━━━━━━━━━━\n"
+             . "👤 Name: $Uname\n"
+             . "🆔 Student ID: $Number\n"
+             . "💳 RFID Card UID: $card_uid\n"
+             . "🏫 Department: $device_dep\n"
+             . $courseLine
+             . "👫 Gender: $Gender\n"
+             . "📞 Phone: $Phone\n"
+             . "📧 Email: $Email\n"
+             . "⏰ Check-In At: $formattedDateTime";
 
         sendTelegram($msg);
 
@@ -136,7 +190,7 @@ if ($device_mode == 1) {
     // ================= OUT TIME =================
     $sql = "UPDATE users_logs
             SET timeout=?, card_out=1
-            WHERE card_uid=? AND checkindate=? AND card_out=0";
+            WHERE card_uid=? AND checkindate=? AND course_id=? AND card_out=0";
 
     $stmt = mysqli_stmt_init($conn);
 
@@ -145,16 +199,21 @@ if ($device_mode == 1) {
         exit();
     }
 
-    mysqli_stmt_bind_param($stmt, "sss", $t, $card_uid, $d);
+    mysqli_stmt_bind_param($stmt, "sssi", $t, $card_uid, $d, $course_id);
     mysqli_stmt_execute($stmt);
 
-    // 🔔 TELEGRAM (OUT)
-    $msg = "🔴 OUT TIME\n"
-         . "Name: $Uname\n"
-         . "ID: $Number\n"
-         . "Department: $device_dep\n"
-         . "Time: $t\n"
-         . "Date: $d";
+    // TELEGRAM (OUT)
+    $msg = "🔴 STUDENT CHECK OUT\n"
+         . "━━━━━━━━━━━━━━━━━━━━━\n"
+         . "👤 Name: $Uname\n"
+         . "🆔 Student ID: $Number\n"
+         . "💳 RFID Card UID: $card_uid\n"
+         . "🏫 Department: $device_dep\n"
+         . $courseLine
+         . "👫 Gender: $Gender\n"
+         . "📞 Phone: $Phone\n"
+         . "📧 Email: $Email\n"
+         . "⏰ Check-Out At: $formattedDateTime";
 
     sendTelegram($msg);
 
@@ -190,7 +249,7 @@ if ($device_mode == 0) {
         exit();
     }
 
-    // Insert new card
+    // Insert new card (Student registration notification is sent from manage_users_conf.php once student details are saved)
     mysqli_query($conn, "UPDATE users SET card_select=0");
 
     $sql = "INSERT INTO users (card_uid, card_select, device_uid, device_dep, user_date)
@@ -205,16 +264,6 @@ if ($device_mode == 0) {
 
     mysqli_stmt_bind_param($stmt, "sss", $card_uid, $device_uid, $device_dep);
     mysqli_stmt_execute($stmt);
-
-    // 🔔 TELEGRAM (NEW REGISTER)
-    $msg = "🆕 NEW STUDENT REGISTERED\n"
-         . "Card UID: $card_uid\n"
-         . "Device: $device_uid\n"
-         . "Department: $device_dep\n"
-         . "Time: $t\n"
-         . "Date: $d";
-
-    sendTelegram($msg);
 
     echo "succesful";
     exit();

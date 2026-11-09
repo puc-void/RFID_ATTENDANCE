@@ -1,19 +1,58 @@
 <?php  
-//Connect to database
-require'connectDB.php';
+// Connect to database
+require 'connectDB.php';
+date_default_timezone_set('Asia/Dhaka');
 
-//Add user
+// ================= TELEGRAM HELPER =================
+function sendTelegram($msg) {
+    global $conn;
+    $botToken = '';
+    $chatID = '';
+    $settingsResult = @mysqli_query($conn, "SELECT setting_key, setting_value FROM app_settings WHERE setting_key IN ('telegram_bot_token', 'telegram_chat_id', 'telegram_enabled')");
+    if ($settingsResult) {
+        $settings = array();
+        while ($setting = mysqli_fetch_assoc($settingsResult)) {
+            $settings[$setting['setting_key']] = $setting['setting_value'];
+        }
+        if (($settings['telegram_enabled'] ?? '0') === '1') {
+            $botToken = trim($settings['telegram_bot_token'] ?? '');
+            $chatID = trim($settings['telegram_chat_id'] ?? '');
+        }
+    }
+    if ($botToken === '' || $chatID === '') {
+        return;
+    }
+    $url = "https://api.telegram.org/bot" . $botToken . "/sendMessage";
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(array(
+            'chat_id' => $chatID,
+            'text' => $msg
+        )));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        @curl_exec($ch);
+        curl_close($ch);
+    } else {
+        @file_get_contents($url . "?chat_id=" . urlencode($chatID) . "&text=" . urlencode($msg));
+    }
+}
+// ===================================================
+
+// Add user
 if (isset($_POST['Add'])) {
      
     $user_id = $_POST['user_id'];
-    $Uname = $_POST['name'];
-    $Number = $_POST['number'];
-    $Email = $_POST['email'];
-    $dev_uid = $_POST['dev_uid'];
-    $Gender = $_POST['gender'];
+    $Uname   = trim($_POST['name'] ?? '');
+    $Number  = trim($_POST['number'] ?? '');
+    $Phone   = trim($_POST['phone'] ?? '');
+    $Email   = trim($_POST['email'] ?? '');
+    $dev_uid = $_POST['dev_uid'] ?? '0';
+    $Gender  = $_POST['gender'] ?? 'Male';
     
-    //check if there any selected user
-    $sql = "SELECT add_card FROM users WHERE id=?";
+    // Check if there is any selected user
+    $sql = "SELECT add_card, card_uid FROM users WHERE id=?";
     $result = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($result, $sql)) {
       echo "SQL_Error";
@@ -23,13 +62,14 @@ if (isset($_POST['Add'])) {
         mysqli_stmt_bind_param($result, "i", $user_id);
         mysqli_stmt_execute($result);
         $resultl = mysqli_stmt_get_result($result);
-        if ($row = mysqli_fetch_assoc($resultl)) {
+        if ($userCardRow = mysqli_fetch_assoc($resultl)) {
 
-            if ($row['add_card'] == 0) {
+            if ($userCardRow['add_card'] == 0) {
+                $card_uid = $userCardRow['card_uid'];
 
                 if (!empty($Uname) && !empty($Number) && !empty($Email)) {
-                    //check if there any user had already the Serial Number
-                    $sql = "SELECT serialnumber FROM users WHERE serialnumber=? AND id NOT like ?";
+                    // Check if any user already has the Serial Number
+                    $sql = "SELECT serialnumber FROM users WHERE serialnumber=? AND id NOT LIKE ?";
                     $result = mysqli_stmt_init($conn);
                     if (!mysqli_stmt_prepare($result, $sql)) {
                         echo "SQL_Error";
@@ -57,15 +97,31 @@ if (isset($_POST['Add'])) {
                                     $dev_name = "All";
                                 }
                             }
-                            $sql="UPDATE users SET username=?, serialnumber=?, gender=?, email=?, user_date=CURDATE(), device_uid=?, device_dep=?, add_card=1 WHERE id=?";
+                            $phoneVal = ($Phone !== '') ? $Phone : 'None';
+                            $sql = "UPDATE users SET username=?, serialnumber=?, gender=?, phone=?, email=?, user_date=CURDATE(), device_uid=?, device_dep=?, add_card=1 WHERE id=?";
                             $result = mysqli_stmt_init($conn);
                             if (!mysqli_stmt_prepare($result, $sql)) {
                                 echo "SQL_Error_select_Fingerprint";
                                 exit();
                             }
                             else{
-                                mysqli_stmt_bind_param($result, "sdssssi", $Uname, $Number, $Gender, $Email, $dev_uid, $dev_name, $user_id );
+                                mysqli_stmt_bind_param($result, "sdsssssi", $Uname, $Number, $Gender, $phoneVal, $Email, $dev_uid, $dev_name, $user_id);
                                 mysqli_stmt_execute($result);
+
+                                // Send Telegram notification after registering student
+                                $registeredAt = date("d M Y, h:i:s A");
+                                $phoneDisplay = ($Phone !== '' && $Phone !== 'None') ? $Phone : 'N/A';
+                                $msg = "🎉 NEW STUDENT REGISTERED\n"
+                                     . "━━━━━━━━━━━━━━━━━━━━━\n"
+                                     . "👤 Name: $Uname\n"
+                                     . "🆔 Student ID: $Number\n"
+                                     . "💳 RFID Card UID: $card_uid\n"
+                                     . "🏫 Department: $dev_name\n"
+                                     . "👫 Gender: $Gender\n"
+                                     . "📞 Phone: $phoneDisplay\n"
+                                     . "📧 Email: $Email\n"
+                                     . "⏰ Registered At: $registeredAt";
+                                sendTelegram($msg);
 
                                 echo 1;
                                 exit();
@@ -93,17 +149,19 @@ if (isset($_POST['Add'])) {
         }
     }
 }
-// Update an existance user 
+
+// Update an existing user 
 if (isset($_POST['Update'])) {
 
     $user_id = $_POST['user_id'];
-    $Uname = $_POST['name'];
-    $Number = $_POST['number'];
-    $Email = $_POST['email'];
-    $dev_uid = $_POST['dev_uid'];
-    $Gender = $_POST['gender'];
+    $Uname   = trim($_POST['name'] ?? '');
+    $Number  = trim($_POST['number'] ?? '');
+    $Phone   = trim($_POST['phone'] ?? '');
+    $Email   = trim($_POST['email'] ?? '');
+    $dev_uid = $_POST['dev_uid'] ?? '0';
+    $Gender  = $_POST['gender'] ?? 'Male';
 
-    //check if there any selected user
+    // Check if there is any selected user
     $sql = "SELECT add_card FROM users WHERE id=?";
     $result = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($result, $sql)) {
@@ -126,8 +184,8 @@ if (isset($_POST['Update'])) {
                     exit();
                 }
                 else{
-                    //check if there any user had already the Serial Number
-                    $sql = "SELECT serialnumber FROM users WHERE serialnumber=? AND id NOT like ?";
+                    // Check if any user already has the Serial Number
+                    $sql = "SELECT serialnumber FROM users WHERE serialnumber=? AND id NOT LIKE ?";
                     $result = mysqli_stmt_init($conn);
                     if (!mysqli_stmt_prepare($result, $sql)) {
                         echo "SQL_Error";
@@ -157,15 +215,15 @@ if (isset($_POST['Update'])) {
                             }
                                     
                             if (!empty($Uname) && !empty($Email)) {
-
-                                $sql="UPDATE users SET username=?, serialnumber=?, gender=?, email=?, device_uid=?, device_dep=? WHERE id=?";
+                                $phoneVal = ($Phone !== '') ? $Phone : 'None';
+                                $sql = "UPDATE users SET username=?, serialnumber=?, gender=?, phone=?, email=?, device_uid=?, device_dep=? WHERE id=?";
                                 $result = mysqli_stmt_init($conn);
                                 if (!mysqli_stmt_prepare($result, $sql)) {
                                     echo "SQL_Error_select_Card";
                                     exit();
                                 }
                                 else{
-                                    mysqli_stmt_bind_param($result, "sdssssi", $Uname, $Number, $Gender, $Email, $dev_uid, $dev_name, $user_id );
+                                    mysqli_stmt_bind_param($result, "sdsssssi", $Uname, $Number, $Gender, $phoneVal, $Email, $dev_uid, $dev_name, $user_id);
                                     mysqli_stmt_execute($result);
 
                                     echo 1;
@@ -187,7 +245,8 @@ if (isset($_POST['Update'])) {
         }
     }
 }
-// select fingerprint 
+
+// Select card 
 if (isset($_GET['select'])) {
 
     $card_uid = $_GET['card_uid'];
@@ -202,8 +261,6 @@ if (isset($_GET['select'])) {
         mysqli_stmt_bind_param($result, "s", $card_uid);
         mysqli_stmt_execute($result);
         $resultl = mysqli_stmt_get_result($result);
-        // echo "User Fingerprint selected";
-        // exit();
         header('Content-Type: application/json');
         $data = array();
         if ($row = mysqli_fetch_assoc($resultl)) {
@@ -216,7 +273,8 @@ if (isset($_GET['select'])) {
         print json_encode($data);
     } 
 }
-// delete user 
+
+// Delete user 
 if (isset($_POST['delete'])) {
 
     $user_id = $_POST['user_id'];
